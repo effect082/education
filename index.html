@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ko" class="theme-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 전략기획팀 사업안내 - 신입직원 교육자료</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script>Chart.defaults.animation = false;</script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { interpolate-size: allow-keywords; }
+
+    /* ===== THEMES (class-based ONLY) ===== */
+    html.theme-dark {
+      --bg: #0A0A0A; --surface: #141414; --surface-hover: #1C1C1C;
+      --border: rgba(255,255,255,0.04);
+      --text: #EDEDED; --text-secondary: #888;
+      --accent: #3b82f6; --accent-secondary: #8b5cf6;
+      --positive: #10b981; --negative: #f43f5e; --warning: #f59e0b;
+    }
+    html.theme-light {
+      --bg: #FAFAF9; --surface: #FFFFFF; --surface-hover: #F5F5F4;
+      --border: rgba(0,0,0,0.06);
+      --text: #0f172a; --text-secondary: #64748b;
+      --accent: #2563eb; --accent-secondary: #7c3aed;
+      --positive: #059669; --negative: #e11d48; --warning: #d97706;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em; font-feature-settings: 'cv11', 'ss01';
+      transition: background 0.3s, color 0.3s;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+
+    /* SLIDE DECK STYLES */
+    #slide-container {
+      flex: 1; position: relative; width: 100%; height: 100%; overflow: hidden;
+    }
+    .slide {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      padding: 48px 5%;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      opacity: 0; pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; transform: translateX(0); z-index: 10; }
+    .slide.prev { transform: translateX(-40px); }
+
+    /* Theme-aware Gradients for Title Slides */
+    .theme-dark .slide.title-slide { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%); align-items: center; justify-content: center; text-align: center; }
+    .theme-light .slide.title-slide { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #dbeafe 100%); align-items: center; justify-content: center; text-align: center; }
+    .slide.title-slide h1 { font-size: clamp(3rem, 6vw, 5rem); margin-bottom: 24px; color: var(--text); }
+    .slide.title-slide p { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--text-secondary); }
+
+    .slide h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 48px; font-weight: 700; color: var(--text); }
+    .slide h3 { font-size: 1.8rem; margin-bottom: 24px; font-weight: 600; color: var(--accent); }
+    
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; width: 100%; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; width: 100%; }
+    
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; transition: box-shadow 0.2s ease; height: 100%; }
+    .card:hover { box-shadow: 0 0 0 1px var(--border), 0 8px 16px rgba(0,0,0,0.08); }
+    .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: inline-block; padding: 12px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); }
+    .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+    .card-text { font-size: 1.1rem; color: var(--text-secondary); }
+    
+    .highlight-badge { display: inline-block; padding: 6px 12px; background: var(--accent); color: white; border-radius: 20px; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; }
+
+    /* Progress bar */
+    .progress-bar { position: absolute; top: 0; left: 0; height: 4px; background: var(--accent-secondary); transition: width 0.3s ease; z-index: 100; }
+
+    /* Nav bar */
+    .slide-nav { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; z-index: 9998; background: var(--surface); padding: 8px 16px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .slide-nav button { width: 32px; height: 32px; border-radius: 6px; background: transparent; border: none; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .slide-nav button:hover { background: var(--surface-hover); }
+    .slide-counter { font-size: 14px; color: var(--text-secondary); font-weight: 500; min-width: 48px; text-align: center; }
+
+    .chart-container-wrapper { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 40px; }
+    .chart-container { position: relative; height: 400px; width: 100%; }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .slide { padding: 32px 16px; }
+      .slide h2 { margin-bottom: 32px; }
+    }
+    @media (max-width: 375px) {
+      body { overflow-x: hidden; }
+      .grid-2, .grid-4 { grid-template-columns: 1fr; }
+      .chart-container { height: 300px; padding: 16px; }
+      .chart-container-wrapper { padding: 16px; }
+    }
+
+    /* Print */
+    @media print {
+      body { height: auto; overflow: visible; background: white !important; color: black !important; }
+      #slide-container { display: flex; flex-direction: column; overflow: visible; }
+      .slide { position: relative; height: auto; page-break-after: always; transform: none !important; opacity: 1 !important; margin-bottom: 40px; padding: 40px !important; border: 1px solid #ddd; }
+      .slide-nav, .viz-menu, .progress-bar { display: none !important; }
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+
+    /* ===== MENU ===== */
+    .viz-menu { position: fixed; top: 16px; right: 16px; z-index: 9999; }
+    .viz-menu-toggle {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(12px); transition: all 0.2s;
+    }
+    .viz-menu-toggle:hover { background: var(--surface-hover); }
+    .viz-menu-dropdown {
+      position: absolute; top: 52px; right: 0; min-width: 200px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px);
+      transition: all 0.2s; backdrop-filter: blur(16px);
+    }
+    .viz-menu-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .viz-menu-dropdown button {
+      width: 100%; padding: 10px 14px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text); font-size: 14px;
+      font-family: inherit; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 10px; transition: background 0.15s;
+    }
+    .viz-menu-dropdown button:hover { background: var(--surface-hover); }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- MENU -->
+  <div class="viz-menu">
+    <button class="viz-menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+      </svg>
+    </button>
+    <div class="viz-menu-dropdown" id="vizMenuDropdown">
+      <button onclick="cycleTheme()"><span id="themeIcon">🌙</span><span id="themeLabel">Dark</span></button>
+      <button onclick="downloadImage()"><span>📥</span><span>Download PNG</span></button>
+      <button onclick="window.print()"><span>🖨️</span><span>Print / PDF</span></button>
+    </div>
+  </div>
+
+  <main id="slide-container" role="main">
+    
+    <!-- Slide 1: Title -->
+    <section class="slide title-slide active" id="slide0">
+      <div class="highlight-badge">2026 O.T.</div>
+      <h1>강동어울림복지관<br>2026년 전략기획팀 사업안내</h1>
+      <p>신입직원 교육자료 (시무식 발표안)</p>
+    </section>
+
+    <!-- Slide 2: 2025 Achievements -->
+    <section class="slide" id="slide1">
+      <h2>2025년 전략기획팀 주요 성과</h2>
+      <div class="grid-4" style="margin-top: 24px;">
+        <div class="card">
+          <div class="card-icon">🎓</div>
+          <div class="card-title">직원 역량 강화</div>
+          <div class="card-text">내·외부 교육 및 직원 연수 지원<br><br><span style="color:var(--positive);">» 전문성 향상 및 긍정적 조직문화 조성</span></div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📢</div>
+          <div class="card-title">소통 및 채널 관리</div>
+          <div class="card-text">복지관 홈페이지 및 SNS 운영<br>다양한 홍보물 제작 배포<br><br><span style="color:var(--positive);">» 지역주민 정보 접근성 대폭 향상</span></div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤝</div>
+          <div class="card-title">주요 행사 운영</div>
+          <div class="card-text">개관 1주년 기념 어울림의 장<br>직원 체육대회 기획 및 진행<br><br><span style="color:var(--positive);">» 복지관 비전 재확인 및 연대감 형성</span></div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👂</div>
+          <div class="card-title">이용인 욕구 조사</div>
+          <div class="card-text">이용인 참여위원회, 고충처리함<br>연간 고객 만족도 조사 실시<br><br><span style="color:var(--positive);">» 신뢰도 향상 및 고객만족 윤리경영</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: 2026 Direction Chart -->
+    <section class="slide" id="slide2">
+      <h2>2026년 전략기획팀 핵심 운영 방향</h2>
+      <div class="grid-2">
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 24px;">
+          <div>
+            <h3>1. 미래지향 사업 고도화</h3>
+            <p class="text-secondary">디지털 전환 서비스 혁신, 중장기 마스터플랜 수립 및 신규 복지모델 개발에 앞장섭니다.</p>
+          </div>
+          <div>
+            <h3>2. 이용인 중심 서비스 기반 마련</h3>
+            <p class="text-secondary">서비스 품질향상 모니터링 체계를 구축하고, 이용인 권리증진 관련 제도를 종합적으로 개선합니다.</p>
+          </div>
+          <div>
+            <h3>3. 지역과 활발한 양방향 소통</h3>
+            <p class="text-secondary">오프라인 네트워크뿐 아니라 SNS, 뉴스레터 등 다각적 채널을 활용해 소통 범위를 넓힙니다.</p>
+          </div>
+           <div>
+            <h3>4. ESG를 통한 조직 전문성 강화</h3>
+            <p class="text-secondary">환경(E), 사회(S), 지배구조(G) 실천 방안을 마련하여 지속가능한 복지 경영을 도입합니다.</p>
+          </div>
+        </div>
+        <div class="chart-container-wrapper" role="img" aria-label="2026 운영 방향 차트: 미래지향, 이용인 중심, 지역과 양방향 소통, 조직의 전문성 강화 4개 핵심 영역 비교 차트">
+          <div class="chart-container">
+            <canvas id="directionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: New Business -->
+    <section class="slide" id="slide3">
+      <h2>2026년 주요 신규 사업 안내</h2>
+      <div class="grid-2" style="margin-top: 24px;">
+        <div class="card">
+          <div class="highlight-badge">신규사업 1</div>
+          <div class="card-title" style="font-size: 2rem;">더어울림 사회복지사</div>
+          <ul style="margin-top: 16px; padding-left: 20px; font-size: 1.15rem; color: var(--text-secondary); line-height: 1.8;">
+            <li><strong style="color: var(--text);">목적:</strong> 신규 복지리더를 양성하여 현장 중심의 대응력 확보</li>
+            <li><strong style="color: var(--text);">활동:</strong> 복지 사각지대 위기가정 발굴 및 긴급 연계</li>
+            <li><strong style="color: var(--text);">기대효과:</strong> 주민 스스로 파악하고 문제를 해결할 수 있는 '마을단위 복지 공동체' 인프라 구축</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="highlight-badge">신규사업 2</div>
+          <div class="card-title" style="font-size: 2rem;">공간 대관 사업</div>
+          <ul style="margin-top: 16px; padding-left: 20px; font-size: 1.15rem; color: var(--text-secondary); line-height: 1.8;">
+            <li><strong style="color: var(--text);">목적:</strong> 복지관 유휴 공간을 활용하여 지역사회 편의 증진</li>
+            <li><strong style="color: var(--text);">활동:</strong> 주민 회의, 단체 모임 등을 위한 안전하고 쾌적한 시설 대관</li>
+            <li><strong style="color: var(--text);">기대효과:</strong> 지역 주민의 자발적 참여 빈도 증가 및 복지관 친밀도·접근성 향상</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: ESG -->
+    <section class="slide" id="slide4">
+      <h2>조직의 전문성 강화: ESG 경영 실천</h2>
+      <div style="background: var(--surface-hover); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 32px; font-weight: 500;">
+        <span style="color: var(--accent);">진행 단계:</span> 기획 (현황분석 및 목표설정) ➔ <strong>TF 및 실행 위원회 구성</strong> ➔ 중장기 계획 수립 ➔ 경영 실천 및 안정화
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--positive);">🌱</div>
+          <div class="card-title">환경 (Environment)</div>
+          <ul style="padding-left: 20px; color: var(--text-secondary);">
+            <li>에너지 사용량 절감</li>
+            <li>폐기물 체계적 관리</li>
+            <li>친환경 인식 교육 프로그램</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--accent);">🫂</div>
+          <div class="card-title">사회 (Social)</div>
+          <ul style="padding-left: 20px; color: var(--text-secondary);">
+            <li>지역사회 나눔 공헌</li>
+            <li>직원 복리후생 증진</li>
+            <li>이용인 안전 보건 관리</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(139, 92, 246, 0.1); color: var(--accent-secondary);">⚖️</div>
+          <div class="card-title">지배구조 (Governance)</div>
+          <ul style="padding-left: 20px; color: var(--text-secondary);">
+            <li>고객 만족 윤리경영</li>
+            <li>투명한 의사결정 프로세스</li>
+            <li>이해관계자 열린 소통</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">📈</div>
+          <div class="card-title">성과 모니터링</div>
+          <ul style="padding-left: 20px; color: var(--text-secondary);">
+            <li>ESG 담당자 지정 및 교육</li>
+            <li>성과 평가 및 정기 보고</li>
+            <li>우수사례 지속 모색</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Outro -->
+    <section class="slide title-slide" id="slide5" style="align-items: center; justify-content: center;">
+      <h2 style="font-size: clamp(3rem, 5vw, 4rem); margin-bottom: 24px;">함께 만들어가는 2026년</h2>
+      <p style="font-size: 1.5rem; color: var(--text-secondary); max-width: 800px; line-height: 1.6;">
+        강동어울림복지관 전략기획팀은 혁신적이고 투명한 조직 운영을 통해<br>
+        모두가 어울려 살아가는 든든한 기반을 만들겠습니다.
+      </p>
+      <div style="margin-top: 48px; color: var(--text); font-weight: 600; font-size: 1.25rem;">
+        감사합니다.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide Navigation -->
+  <nav class="slide-nav" aria-label="Slide navigation">
+    <button onclick="prevSlide()" aria-label="Previous slide">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <span class="slide-counter" id="slideCounter">1 / 6</span>
+    <button onclick="nextSlide()" aria-label="Next slide">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </nav>
+
+  <script>
+    // === Core JS variables ===
+    var currentSlide = 0;
+    var slides = document.querySelectorAll('.slide');
+    var totalSlides = slides.length;
+    var isAnimating = false;
+
+    function updateNav() {
+      document.getElementById('slideCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+      document.getElementById('progressBar').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+      
+      // Update fragment URL optionally
+      if (currentSlide > 0) {
+        window.history.replaceState(null, null, '#slide' + currentSlide);
+      } else {
+        window.history.replaceState(null, null, window.location.pathname);
+      }
+    }
+
+    function goToSlide(index) {
+      if (isAnimating || index === currentSlide || index < 0 || index >= totalSlides) return;
+      isAnimating = true;
+      
+      var direction = index > currentSlide ? 1 : -1;
+      var active = slides[currentSlide];
+      var next = slides[index];
+      
+      // Setup position for next slide
+      next.style.transition = 'none';
+      next.style.transform = 'translateX(' + (40 * direction) + 'px)';
+      next.style.opacity = '0';
+      
+      // Trigger reflow
+      next.offsetHeight;
+      
+      // Animate
+      next.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+      active.classList.remove('active');
+      active.classList.add(direction > 0 ? 'prev' : 'next'); // Just a semantic class, transforms managed above mostly
+      
+      next.classList.remove('prev', 'next');
+      next.classList.add('active');
+      
+      currentSlide = index;
+      updateNav();
+      
+      // Handle charts if on a slide with a chart
+      if (index === 2) {
+        setTimeout(buildCharts, 200);
+      }
+      
+      setTimeout(function() { isAnimating = false; }, 500);
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    // Init slides config
+    slides.forEach(function(s, i) {
+      if (i !== 0) s.classList.remove('active');
+    });
+    
+    // Check URL fragment for starting slide
+    var hash = window.location.hash;
+    if (hash && hash.startsWith('#slide')) {
+      var slideNum = parseInt(hash.replace('#slide', ''));
+      if (!isNaN(slideNum) && slideNum > 0 && slideNum < totalSlides) {
+        slides[0].classList.remove('active');
+        slides[slideNum].classList.add('active');
+        currentSlide = slideNum;
+      }
+    }
+    updateNav();
+
+    // Keyboard interaction
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'Enter') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Touch swipe interaction
+    var touchStartX = 0;
+    var touchEndX = 0;
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    document.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
+    function handleSwipe() {
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }
+
+    // === Menu ===
+    function toggleMenu() { 
+      var dropdown = document.getElementById('vizMenuDropdown');
+      if (dropdown) dropdown.classList.toggle('open'); 
+    }
+    document.addEventListener('click', function(e) { 
+      if (!e.target.closest('.viz-menu')) {
+        var dropdown = document.getElementById('vizMenuDropdown');
+        if (dropdown) dropdown.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', function(e) { 
+      if (e.key === 'Escape') {
+        var dropdown = document.getElementById('vizMenuDropdown');
+        if (dropdown) dropdown.classList.remove('open');
+      }
+    });
+
+    // === Theme (class-based, OS detection on first visit) ===
+    var savedTheme = localStorage.getItem('viz-theme');
+    var currentTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    function applyTheme(t) {
+      document.documentElement.className = 'theme-' + t;
+      var tIcon = document.getElementById('themeIcon');
+      var tLabel = document.getElementById('themeLabel');
+      if (tIcon) tIcon.textContent = t === 'dark' ? '🌙' : '☀️';
+      if (tLabel) tLabel.textContent = t === 'dark' ? 'Dark' : 'Light';
+      localStorage.setItem('viz-theme', t);
+      currentTheme = t;
+      if (typeof onThemeChange === 'function') onThemeChange();
+    }
+    function cycleTheme() { applyTheme(currentTheme === 'dark' ? 'light' : 'dark'); }
+    applyTheme(currentTheme);
+
+    // === Download PNG ===
+    async function downloadImage() {
+      var menu = document.querySelector('.viz-menu');
+      if (menu) menu.style.display = 'none';
+      var nav = document.querySelector('.slide-nav');
+      if (nav) nav.style.display = 'none';
+      try {
+        var url = await htmlToImage.toPng(document.body, { quality: 1, pixelRatio: 2, filter: function(n) { return !n.classList || !n.classList.contains('viz-menu'); } });
+        var a = document.createElement('a'); a.href = url;
+        a.download = document.title.replace(/\s+/g, '-').toLowerCase() + '.png'; a.click();
+      } catch(e) { console.error('Download failed:', e); }
+      if (menu) menu.style.display = '';
+      if (nav) nav.style.display = 'flex';
+    }
+    
+    // === Chart.js (MANDATORY PATTERNS) ===
+    var chartsBuilt = false; // Guard flag
+    
+    function getChartColors() {
+      var s = getComputedStyle(document.documentElement);
+      return {
+        text: s.getPropertyValue('--text').trim(),
+        textSecondary: s.getPropertyValue('--text-secondary').trim(),
+        border: s.getPropertyValue('--border').trim(),
+        accent: s.getPropertyValue('--accent').trim(),
+        accentSecondary: s.getPropertyValue('--accent-secondary').trim(),
+        positive: s.getPropertyValue('--positive').trim(),
+        warning: s.getPropertyValue('--warning').trim()
+      };
+    }
+    
+    function resetCanvas(id) {
+      var old = document.getElementById(id);
+      if (!old) return null;
+      var parent = old.parentNode;
+      var canvas = document.createElement('canvas');
+      canvas.id = id;
+      canvas.setAttribute('role', 'img');
+      canvas.setAttribute('aria-label', old.getAttribute('aria-label') || 'Chart visualization');
+      parent.replaceChild(canvas, old);
+      return canvas;
+    }
+
+    function buildCharts() {
+      if (chartsBuilt || typeof Chart === 'undefined') return;
+      if (currentSlide !== 2) return; // Only build when slide 2 is active or will be active
+      
+      var colors = getChartColors();
+      
+      if (window.directionChart) {
+        try { window.directionChart.destroy(); } catch(e) {}
+      }
+      
+      var ctx = resetCanvas('directionChart');
+      if (ctx) {
+        window.directionChart = new Chart(ctx, {
+          type: 'polarArea',
+          data: {
+            labels: ['미래지향', '이용인 중심', '지역과 양방향 소통', 'ESG 조직 강화'],
+            datasets: [{
+              label: '운영 비중',
+              data: [25, 25, 25, 25],
+              backgroundColor: [
+                colors.accent + '99',
+                colors.positive + '99',
+                colors.warning + '99',
+                colors.accentSecondary + '99'
+              ],
+              borderColor: colors.surface,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            layout: { padding: 20 },
+            scales: {
+              r: {
+                ticks: { display: false },
+                grid: { color: colors.border }
+              }
+            },
+            plugins: {
+              tooltip: {
+                enabled: true,
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function(context) { return ' ' + context.label + ' (핵심 영역)'; }
+                }
+              },
+              legend: {
+                position: 'right',
+                labels: {
+                  color: colors.textSecondary,
+                  font: { family: 'Inter', size: 14 }
+                }
+              }
+            }
+          }
+        });
+      }
+      chartsBuilt = true;
+    }
+
+    function onThemeChange() {
+      chartsBuilt = false;
+      setTimeout(buildCharts, 100);
+    }
+    
+    // Build initial charts on load if on correct slide
+    window.addEventListener('load', function() {
+      if (currentSlide === 2) buildCharts();
+    });
+
+  </script>
+</body>
+</html>
